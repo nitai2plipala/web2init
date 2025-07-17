@@ -1,0 +1,222 @@
+/*!
+ * Plipala Workspace.
+ * CSS Hetui Script library v1.0.0
+ * Link: https://plipala.net/
+*/
+
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /*取消链接高亮*/
+}
+
+:focus {
+    outline-offset: initial;
+    outline-color: transparent;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    position: relative;
+    -ms-overflow-x: hidden;
+    overflow-x: hidden;
+    font-size: 16px;
+    height: 100%;
+    display: block;
+
+}
+
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, main {
+	display: block;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+    
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    line-height: 1;
+    color: #333333;
+    background-color: #FFFFFF;
+}
+
+button {
+    border: inherit;
+    padding: 0;
+}
+
+button:focus {
+    outline: inherit;
+}
+
+ol, ul {
+    margin-block-start: initial;
+    margin-block-end: initial;
+    padding-inline-start: initial;
+    list-style: none;
+}
+
+
+li {
+    list-style: inside;
+}
+
+p {
+    margin-block-start: initial;
+    margin-block-end: initial;
+}
+
+a {
+    color: rgb(0, 0, 238) ;
+    text-decoration: initial;
+    cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-block-start: initial;
+    margin-block-end: initial;
+}
+
+hr {
+  box-sizing: content-box; 
+  height: 0; 
+  overflow: visible; 
+}
+
+a:active {
+    color: rgb(255, 0, 0);
+}
+
+abbr[title] {
+  border-bottom: none; 
+  text-decoration: underline; 
+  text-decoration: underline dotted; 
+}
+
+textarea {
+  overflow: auto;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+
+/* 图片自适应 */
+img {
+    /*max-width: 100%;*/
+    height: auto;
+    width: auto \9;
+    border-style: none;
+    vertical-align: middle;
+    /* ie8 */
+    -ms-interpolation-mode: bicubic;
+    /*为了照顾ie图片缩放失真*/
+}
+
+
+/* 去除iPhone中默认的input样式 */
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input,
+button {
+    /* -webkit-appearance:none; */
+    resize: none;
+    overflow: visible;
+    -webkit-appearance: button;
+}
+
+button,
+select {
+  text-transform: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+    -webkit-text-fill-color: #333;
+}
+
+::-ms-clear, ::-ms-reveal {
+    display: none;
+}
+
+/*====================================*/
+
+[hide] {
+    display: none;
+}
+
+
+[clearfix] {
+    zoom: 1;
+}
+[clearfix]:after {
+    content: "";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    clear: both;
+}
+
+[clearfix]::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+
+
