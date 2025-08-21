@@ -67,6 +67,14 @@ Object.prototype.Foreach = function (functor, self) {
     }
 };
 
+if (Object.prototype.Foreach) {
+
+    // 解决原型链污染问题 Gitea
+    
+    Object.defineProperty(Object.prototype, 'Foreach', {
+        enumerable: false
+    });
+}
 
 Document.prototype.QueryNode = function (pattern) {
 
