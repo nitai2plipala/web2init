@@ -602,6 +602,10 @@ function HtmNode (node) {
 
                 break;
 
+            case Document.COMMENT_NODE:
+
+                break;
+
             default:
 
                 throw node
