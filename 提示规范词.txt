@@ -1,0 +1,54 @@
+## 前端代码规范
+
+### css 规范
+
+class 类名 应保持三段式  节点-模块-描述名 
+主内容区域可以用模块名做段1开头
+
+节点名代表 主节点 如 文件名(示例repo) 子节点 布局区域 head footer topnav sidebar homepage main-container(代表主内容) 还有 模块名(只能在主内容区域)
+模块名为功能系统名 比如 navlink  
+描述名 最直观显示  
+
+示例如下 classname 目的就是为了确定出现的位置 由前两端配合实现 第三段确定实现的功能和描述
+
+filename-header
+
+	filename-header-logo
+
+		header-logo-name
+
+	filename-header-nav	
+
+		header-nav-link
+
+			header-nav-icon
+
+filename-main-container
+
+	// 全部是主内容区域 只有主内容区域可以用模块名做段1开头
+	filename-main-banner
+
+		filename-banner-image
+
+			banner-image-item
+
+	filename-main-features
+
+		filename-features-section
+
+			features-section-showcase
+
+filename-footer
+
+	filename-footer-title
+
+		footer-title-copyright
+
+	filename-footer-page
+
+		footer-page-link
+
+			footer-link-description
+
+			
+	
