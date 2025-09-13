@@ -1,15 +1,19 @@
 ## 前端代码规范
 
-### css 规范
+### class name 命名规范  保证标签类名和css style类名同步更改
 
-class 类名 应保持三段式  节点-模块-描述名 
-主内容区域可以用模块名做段1开头
+class 类名 应保持三段式  节点-模块-描述名
 
 节点名代表 主节点 如 文件名(示例repo) 子节点 布局区域 head footer topnav sidebar homepage main-container(代表主内容) 还有 模块名(只能在主内容区域)
+
+如何所处位置在主内容区域可以用模块名做段1开头
 模块名为功能系统名 比如 navlink  
-描述名 最直观显示  
+描述名 最直观显示
 
 示例如下 classname 目的就是为了确定出现的位置 由前两端配合实现 第三段确定实现的功能和描述
+重点关注类名的命名规范，而不是布局结构
+
+```
 
 filename-header
 
@@ -49,6 +53,10 @@ filename-footer
 		footer-page-link
 
 			footer-link-description
-
+			
+			    //如果出现位置过于深处 比如层级太高 使用命名描述单词作为类名  增加style样式的时候
+			    //使用 父节点类名 本节点类目 {} 示例css .footer-link-description .icon {}
+			    icon 
+```
 			
 	
