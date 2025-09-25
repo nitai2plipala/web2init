@@ -2,9 +2,9 @@
 
 ## 三段式类名结构 核心约束要求
 
-**格式：`节点-模块-描述名`**
-
+**格式：`出现位置-模块功能-描述名`**: 由最多三个单词使用'-'拼接组成
 **目的：由前两段配合实现就是为了确定出现的位置，第三段确定实现的功能和描述，这是重点。**
+**注意：最多允许出现三个单词格式类名, 同时支持简化为两段或一段格式类名**
 
 在进行前端开发时，必须严格遵循以下HTML类名和CSS选择器规范：
 
@@ -12,16 +12,16 @@
 
 **格式：`节点-模块-描述名`**
 
-#### 第一段：节点名
+#### 第一段：节点名 表示出现位置说明 强调存在**唯一**的元素处
 - **文件级节点**：使用文件名作为前缀（如：`homepage`、`about`、`product`）
-- **布局级节点**：仅支持 以下节点
-  - `header`（头部区域）
-  - `footer`（底部区域）
-  - `sidebar`（侧边栏区域）
-  - `main-container`（主内容区域）
-  - `topnav`（顶部导航）
+- **布局级节点**：仅支持 以下节点 取代文件名做段1
+    - `header`（头部区域）
+    - `footer`（底部区域）
+    - `sidebar`（侧边栏区域）
+    - `main-container`（主内容区域）
+    - `topnav`（顶部导航）
 
-#### 第二段：模块名
+#### 第二段：模块名 表示功能实现模块的名字
 - **功能模块名**：如 `banner`、`navlink`、`features`、`gallery`、`library`
 - **继承模块名**：可以使用父节点的第三段作为模块名（如父节点 `header-nav-link`，子节点可用 `header-link-icon`）
 - **特殊规则**：在主内容区域（main-container）内，可以直接用模块名作为第一段，**一旦确定模块名，该模块内所有子元素都必须以此模块名作为第一段**
@@ -29,9 +29,30 @@
 #### 第三段：描述名
 - **功能描述**：如 `title`、`image`、`link`、`button`、`icon`、`text`
 - **状态描述**：如 `active`、`disabled`、`current`
+- **容器组件名**：如 `container`、`item`、`box`、`group`、`warp`
 - **核心作用**：明确该元素的具体功能和用途
 
-### 2. CSS选择器编写规范
+### 2. HTML标签类名编写组合规范
+
+#### 只允许以下类名格式编写 
+- **出现位置-模块功能-描述名**：`class="header-logo-title"` 表示出现header位置  实现logo模块功能 描述title属性名
+- **出现位置-模块功能** ：`class="header-logo"` 表示出现header位置  实现logo模块功能
+- **出现位置-容器组件名**：`class="filename-container"` 文件名filename是顶级位置节点 容器组件container是描述名
+- **描述名**：`class="active"` 状态; `class="link"` 表示item下类目 `class="icon"` 描述名 class="success"` 样式名; 
+
+#### Style样式应用 选择器编写规范 **只允许以下格式**
+- 三段式选择器**出现位置-模块功能-描述名** ：`class="header-logo-title"` **.header-logo-title{ style...}**
+- 二段式选择器**出现位置-模块功能** ：`class="header-logo"` **.header-logo{ style...}**
+- 二段式选择器**出现位置-容器组件名** ：`class="filename-container"` **.filename-container{ style...}**
+- **描述名** 注意**必须配合父级节点组合使用** ：`class="active"` **父级节点(.header-logo-title) .active{ style...}**; `class="icon"` **父级节点(.header-logo) .icon{ style...}**
+- **元素tagnname** 注意**必须配合父级节点组合使用** ：`<span>tagname span</span> ` **父级节点(.main-container) span{ style...}**
+
+#### html元素内class格式规范 **全部禁止不允许出现这样使用**
+- **只允许存在一个三段式结构类名** 不允许出现多个比如 <span class="header-logo-title header-logo-active">span</span> **正确处理方式 <span class="header-logo-title active">span</span> active 配合父级节点应用样式**
+- **只允许少于三段式结构类名 不允许超过三个单词组合** 不允许出现多个比如 <span class="header-logo-title-active">span</span> **
+
+
+### 3. CSS选择器编写规范
 
 #### 基础选择器规则
 
