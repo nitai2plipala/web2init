@@ -1047,11 +1047,13 @@ Network.XHR = function(config) {
 
                     var response;
 
-                    switch (option["typeof"]) {
+                    switch (option["responseType"]) {
 
                         case "string" :
 
                             response = xhr.responseText;
+
+                            option["success"](response);
 
                             break;
 
@@ -1059,12 +1061,17 @@ Network.XHR = function(config) {
 
                             response = JSON.parse(xhr.responseText);
 
+                            option["success"](response);
+
                             break;
 
-                        case "xml" : {
+                        case "blob" :
 
-                            console.log("not set xml parser");
-                        }
+                            response = xhr.response;
+
+                            option["success"](response, URL.createObjectURL(response));
+
+                            break
 
                         case "html" :
 
@@ -1074,7 +1081,14 @@ Network.XHR = function(config) {
 
                             response = response.firstChild;
 
+                            option["success"](response);
+
                             break;
+
+                        case "xml" : {
+
+                            console.log("not set xml parser");
+                        }
 
                         case "stream" : {
 
@@ -1090,9 +1104,9 @@ Network.XHR = function(config) {
                         default :
 
                             console.log("not know this  parser");
-                    }
 
-                    option["success"](response);
+                            option["success"](response);
+                    }
 
                 } else {
 
