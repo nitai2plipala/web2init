@@ -70,66 +70,27 @@ Object.prototype.Foreach = function (functor, self) {
 if (Object.prototype.Foreach) {
 
     // 解决原型链污染问题 Gitea
-    
+
     Object.defineProperty(Object.prototype, 'Foreach', {
         enumerable: false
     });
 }
 
+
 Document.prototype.QueryNode = function (pattern) {
 
 };
 
-Document.prototype.QueryElement = function (pattern, value) {
+Document.prototype.QueryElement = function (pattern) {
 
     // pattern
     // 1. Array  ["tagname", "#id", ".class", "[attribute]", ">", "+", "*"]
     // 2. String  tagname, name, id, classname
     // 3. String:Selector  "#id .class > taganame [attribute]"
 
-    var htmNodeTuple, tuple;
+    // console.log(pattern);
 
-    if (typeof pattern === "string") {
-
-        switch (pattern) {
-
-            case "tagname":
-
-                if (this.getElementsByTagName) {
-
-                    tuple = this.getElementsByTagName(value);
-
-                    htmNodeTuple = new HtmNodeTuple(tuple);
-
-                    return htmNodeTuple
-                }
-
-            case "name":
-
-            case "id":
-
-            case "classname":
-
-            default:
-
-        }
-
-    } else {
-
-        if (Array.IsArray(pattern)) {
-
-            console.log("数组")
-
-        }
-
-    };
-
-    // this.get
-
-    // tuple.I(8)
-
-    console.log(pattern)
-
+    return document.documentElement.QueryElement(pattern);
 };
 
 Document.prototype.QueryComment = function (pattern) {
@@ -156,7 +117,75 @@ Element.prototype.QueryNode = function (pattern) {
 };
 
 Element.prototype.QueryElement = function (pattern) {
+    // 实现类似jQuery的选择器效果
+    var elements;
+    var htmNodeTuple;
 
+    if (typeof pattern === "string") {
+        // 判断是否为单选择器（不包含空格和CSS组合符号）
+        var isSingleSelector = pattern.indexOf(' ') === -1 && 
+                              pattern.indexOf('>') === -1 && 
+                              pattern.indexOf('+') === -1 && 
+                              pattern.indexOf('~') === -1;
+        
+        if (isSingleSelector) {
+            // 对于单选择器，根据类型使用最合适的原生方法
+            if (pattern.charAt(0) === '#') {
+                // ID选择器
+                if (this === document.documentElement) {
+                    var element = document.getElementById(pattern.substring(1));
+                } else {
+                    var element = this.querySelectorAll(pattern);
+                }
+                if (element) {
+                    elements = [element];
+                } else {
+                    elements = [];
+                }
+            } else if (pattern.charAt(0) === '.') {
+                // Class选择器
+                elements = this.getElementsByClassName ?
+                          this.getElementsByClassName(pattern.substring(1)) :
+                          this.querySelectorAll ? this.querySelectorAll(pattern) : [];
+            } else if (pattern.charAt(0) === '[' && pattern.charAt(pattern.length - 1) === ']') {
+                // 属性选择器
+                var attrSelector = pattern.substring(1, pattern.length - 1);
+                // 使用原生方法实现属性选择
+                var allElements = this.getElementsByTagName('*');
+                elements = [];
+                for (var i = 0; i < allElements.length; i++) {
+                    if (allElements[i].hasAttribute && allElements[i].hasAttribute(attrSelector)) {
+                        elements.push(allElements[i]);
+                    }
+                }
+            } else {
+                // 标签选择器
+                elements = this.getElementsByTagName(pattern);
+            }
+            
+            htmNodeTuple = new HtmNodeTuple(elements);
+            return htmNodeTuple;
+        } else {
+            // 复杂选择器使用querySelectorAll
+            if (this.querySelectorAll) {
+                elements = this.querySelectorAll(pattern);
+                htmNodeTuple = new HtmNodeTuple(elements);
+                return htmNodeTuple;
+            } else {
+                // 兼容旧浏览器
+                console.warn("querySelectorAll is not supported in this browser");
+                return new HtmNodeTuple([]);
+            }
+        }
+    } else if (Array.IsArray(pattern)) {
+        // 处理数组模式
+        console.log("数组模式选择器");
+
+        return new HtmNodeTuple([]);
+    } else {
+        console.warn("Unsupported pattern type for QueryElement");
+        return new HtmNodeTuple([]);
+    }
 };
 
 Element.prototype.QueryComment = function (pattern) {
@@ -164,7 +193,7 @@ Element.prototype.QueryComment = function (pattern) {
 };
 
 function Module () {
-    
+
 }
 
 Module.Audio = function () {
@@ -594,15 +623,21 @@ function HtmNode (node) {
 
                 break;
 
-            case Document.DOCUMENT_NODE: case 9:
+            case Document.COMMENT_NODE: case 8:
 
-                this.Type = HtmNodeType.Document;
+                this.Type = HtmNodeType.Comment;
+
+                this.Data = node.data;
 
                 this.Node = node;
 
                 break;
 
-            case Document.COMMENT_NODE:
+            case Document.DOCUMENT_NODE: case 9:
+
+                this.Type = HtmNodeType.Document;
+
+                this.Node = node;
 
                 break;
 
@@ -3104,6 +3139,88 @@ Hetui.prototype.Run = function (observer) {
                                     }
 
                                     if (!value) {
+
+                                        htm.Node.style.display = "none";
+
+                                    } else {
+
+                                        htm.Node.style.display = "";
+                                    }
+                                };
+
+                                // console.log(field, signal);
+
+                                watcher.subscribe(subject, signal);
+
+                                signal.Functor.call(observer, htm, field);
+
+                                break;
+
+                            case "boolean|hide":
+
+                                var field = attribute.value.split(":");
+
+                                var subject = field;
+
+
+                                if (zhentu.range[0]) {
+
+                                    field = zhentu.field.concat(field);
+
+                                    subject = zhentu.subject;
+
+                                    var scope = zhentu.field.slice();
+
+                                }
+
+                                signal[attribute.name] = {
+                                    Name: attribute.value,
+                                    Param : new Tuple(["htm", "field"]),
+                                    Functor : undefined,
+                                };
+
+                                signal = signal[attribute.name];
+
+                                var argument = signal.Param.tuple;
+
+                                signal.Param.Foreach(function (value, index) {
+
+                                    switch (value) {
+
+                                        case "htm":
+
+                                            this[index] = htm;
+
+                                            break;
+
+                                        case "field":
+
+                                            this[index] = field;
+
+                                            break;
+
+                                        default:
+
+                                    }
+
+                                }, argument);
+
+                                signal.Functor = function (htm, field) {
+
+                                    var value = this;
+
+                                    for (var i = 0; i < field.length; i++) {
+
+                                        if (!value) return;
+
+                                        value = value[field[i]]
+                                    }
+
+                                    if (!value) {
+
+                                        htm.Node.style.display = "";
+
+                                    } else {
 
                                         htm.Node.style.display = "none";
                                     }
