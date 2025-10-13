@@ -1059,7 +1059,7 @@ Network.XHR = function(config) {
 
                         case "json" :
 
-                            response = JSON.parse(xhr.responseText);
+                            response = xhr.response;
 
                             option["success"](response);
 
@@ -1519,6 +1519,65 @@ Hetui.prototype.Run = function (observer) {
                                 };
 
                                 break;
+
+                            case "@keydown":
+
+                                signal[attribute.name] = {
+                                    Name: attribute.value,
+                                    Param : undefined,
+                                    Functor : Hetui,
+                                };
+
+                                signal = signal[attribute.name];
+
+                                attribute.value.split(":").forEach(function (value) {
+
+                                    this.Functor = this.Functor[value];
+
+                                }, signal);
+
+                                signal.Param = new Tuple (Class.Functor.Param(signal.Functor));
+
+                                htm.Node["onkeydown"] = function (event) {
+
+                                    var signal = htm["signal"]["@keydown"];
+
+                                    var argument = signal.Param.tuple;
+
+                                    signal.Param.Foreach(function (value, index) {
+
+                                        switch (value) {
+
+                                            case "event":
+
+                                                this[index] = event;
+
+                                                break;
+
+                                            case "htm":
+
+                                                this[index] = htm;
+
+                                                break;
+
+                                            case "observer":
+
+                                                this[index] = observer;
+
+                                            default:
+
+                                        }
+
+                                    }, argument);
+
+                                    // console.log(argument, signal.Param);
+
+                                    return signal.Functor.apply(hetui, argument);
+
+                                };
+
+                                break;
+
 
                             case "@movemouse":
 
@@ -2394,6 +2453,18 @@ Hetui.prototype.Run = function (observer) {
 
                                 var subject = field;
 
+                                if (zhentu.range[0]) {
+
+                                    // console.log(htm.Node);
+
+                                    field = zhentu.field.concat(field);
+
+                                    subject = zhentu.subject;
+
+                                    var scope = zhentu.field.slice();
+
+                                }
+
                                 signal[attribute.name] = {
                                     Name: attribute.value,
                                     Param : new Tuple(["htm", "field"]),
@@ -2428,11 +2499,28 @@ Hetui.prototype.Run = function (observer) {
 
                                 signal.Functor = function (htm, field) {
 
+                                    console.log(field, this);
+
                                     var value = this;
 
                                     for (var i = 0; i < field.length; i++) {
 
-                                        value = value[field[i]]
+                                        // console.log(htm.Node);
+
+                                        if (!value) return;
+
+                                        switch (field[i]) {
+
+                                            case "#index":
+
+                                                value = scope[0] + 1;
+
+                                                break;
+
+                                            default:
+
+                                                value = value[field[i]]
+                                        }
                                     }
 
                                     htm.Node.href = value;
@@ -3264,6 +3352,8 @@ Hetui.prototype.Run = function (observer) {
                                 range[1] = htm.Node.nextSibling;
 
                                 range[2] = htm.Node.previousSibling;
+
+                                // console.log(range, field);
 
 
                                 if (zhentu.range[0]) {
