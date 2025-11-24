@@ -1578,7 +1578,6 @@ Hetui.prototype.Run = function (observer) {
 
                                 break;
 
-
                             case "@movemouse":
 
                                 signal[attribute.name] = {
@@ -2340,36 +2339,6 @@ Hetui.prototype.Run = function (observer) {
 
                                 break;
 
-                            case "#hide":
-
-                                htm.Node.style.display = "none";
-
-                                Attribute.Remove(htm.Node, "#hide");
-
-                                hetui[attribute.value] = function (boolean) {
-
-                                    if (boolean) {
-
-                                        htm.Node.style.display = "none";
-
-                                    } else {
-
-                                        htm.Node.style.display = "initial";
-                                    }
-                                };
-
-                                signal[attribute.name] = {
-                                    Name: attribute.value,
-                                    Param : Class.Functor.Param(hetui[attribute.value]),
-                                    Functor : hetui[attribute.value],
-                                };
-
-                                signal[attribute.name].Param = new Tuple(signal[attribute.name].Param);
-
-                                hetui[attribute.value]["#hide"] = true;
-
-                                break;
-
                             case ":attr":
 
                                 var field = attribute.value.split("|");
@@ -2499,9 +2468,10 @@ Hetui.prototype.Run = function (observer) {
 
                                 signal.Functor = function (htm, field) {
 
-                                    console.log(field, this);
+                                    // console.log(field, this);
 
                                     var value = this;
+
 
                                     for (var i = 0; i < field.length; i++) {
 
@@ -2735,6 +2705,8 @@ Hetui.prototype.Run = function (observer) {
                                     subject = zhentu.subject;
 
                                     var scope = zhentu.field.slice();
+
+                                    
 
                                 }
 
@@ -3013,6 +2985,316 @@ Hetui.prototype.Run = function (observer) {
 
                                 break;
 
+                            case ":data": // :data="field:value | attr-data"
+
+                                var space = attribute.value.split("|");
+
+                                for (var i = 0; i < space.length; i++) {
+
+                                    var field = space[i].trim().split(":");
+
+                                    var subject = field;
+
+                                    var dataname = ["data", ...field].join("-");
+
+                                    if (zhentu.range[0]) {
+
+                                        // console.log(htm.Node);
+
+                                        field = zhentu.field.concat(field);
+
+                                        subject = zhentu.subject;
+                                    }
+
+                                    signal[attribute.name] = {
+                                        Name: attribute.value,
+                                        Param : new Tuple(["htm", "field", "dataname"]),
+                                        Functor : undefined,
+                                    };
+
+                                    signal = signal[attribute.name];
+
+                                    var argument = signal.Param.tuple;
+
+                                    signal.Param.Foreach(function (value, index) {
+
+                                        switch (value) {
+
+                                            case "htm":
+
+                                                this[index] = htm;
+
+                                                break;
+
+                                            case "field":
+
+                                                this[index] = field;
+
+                                                break;
+
+                                            case "dataname":
+
+                                                this[index] = dataname;
+
+                                                break;
+
+                                            default:
+
+                                        }
+
+                                    }, argument);
+
+                                    signal.Functor = function (htm, field, dataname) {
+
+                                        var value = this;
+
+                                        for (var i = 0; i < field.length; i++) {
+
+                                            if (!value) return;
+
+                                            value = value[field[i]]
+                                        }
+
+                                        // console.log(dataname, value);
+
+                                        Attribute.Update(htm.Node, dataname, value);
+                                    
+                                    };
+
+                                    watcher.subscribe(subject, signal);
+
+                                    signal.Functor.call(observer, htm, field, dataname);
+                                }
+
+                                Attribute.Remove(htm.Node, attribute.name);
+
+                                break;
+
+                            case ":title":
+
+                                var field = attribute.value.split(":");
+
+                                var subject = field;
+
+                                if (zhentu.range[0]) {
+
+                                    // console.log(htm.Node);
+
+                                    field = zhentu.field.concat(field);
+
+                                    subject = zhentu.subject;
+
+                                    var scope = zhentu.field.slice();
+
+                                    // console.log(scope);
+                                }
+
+                                signal[attribute.name] = {
+                                    Name: attribute.value,
+                                    Param : new Tuple(["htm", "field"]),
+                                    Functor : undefined,
+                                };
+
+                                signal = signal[attribute.name];
+
+                                var argument = signal.Param.tuple;
+
+                                signal.Param.Foreach(function (value, index) {
+
+                                    switch (value) {
+
+                                        case "htm":
+
+                                            this[index] = htm;
+
+                                            break;
+
+                                        case "field":
+
+                                            this[index] = field;
+
+                                            break;
+
+                                        default:
+
+                                    }
+
+                                }, argument);
+
+                                signal.Functor = function (htm, field) {
+
+                                    var value = this;
+
+                                    for (var i = 0; i < field.length; i++) {
+
+                                        // console.log(htm.Node);
+
+                                        if (!value) return;
+
+                                        switch (field[i]) {
+
+                                            case "#index":
+
+                                                value = scope[0] + 1;
+
+                                                break;
+
+                                            default:
+
+                                                value = value[field[i]]
+                                        }
+                                    }
+
+                                    
+                                    Attribute.Update(htm.Node, "title", value);
+                                
+                                };
+
+                                watcher.subscribe(subject, signal);
+
+                                Attribute.Remove(htm.Node, attribute.name);
+
+                                signal.Functor.call(observer, htm, field);
+
+                                // console.log(htm);
+                                //
+                                // console.log(htm.Node);
+
+                                break;
+
+                            case ":class":  // class name "field:value|classname?attr-data" 如果第一是布尔可以省略第三值
+
+                                var field = attribute.value.split("?");
+
+                                var data;
+
+                                if (field != attribute.value) {
+
+                                    data = field[1].TrimSpace();
+                                }
+
+                                field = field[0].split("|");
+
+                                var classname = field[1].TrimSpace();
+
+                                field = field[0].split(":");
+
+                                var subject = field;
+
+                                signal[attribute.name] = {
+                                    Name: attribute.value,
+                                    Param : new Tuple(["htm", "field", "classname", "data"]),
+                                    Functor : undefined,
+                                };
+
+                                signal = signal[attribute.name];
+
+                                var argument = signal.Param.tuple;
+
+                                signal.Param.Foreach(function (value, index) {
+
+                                    switch (value) {
+
+                                        case "htm":
+
+                                            this[index] = htm;
+
+                                            break;
+
+                                        case "field":
+
+                                            this[index] = field;
+
+                                            break;
+
+                                        case "classname":
+
+                                            this[index] = classname;
+
+                                            break;
+
+                                        case "data":
+                                            
+                                            this[index] = data;
+
+                                            break;
+
+                                        default:
+
+                                    }
+
+                                }, argument);
+
+                                signal.Functor = function (htm, field, classname, data) {
+
+                                    var value = this;
+
+                                    for (var i = 0; i < field.length; i++) {
+
+                                        value = value[field[i]]
+                                    }
+
+                                    // console.log(value, data, classname);
+
+                                    if (typeof value === "boolean" && !data) {
+                                        
+                                        htm.Node.classList.add(classname); 
+
+                                    } else {
+
+                                        var refer = Attribute.Query(htm.Node, data)
+
+                                        if (value == refer) {
+
+                                            htm.Node.classList.add(classname);  
+
+                                        } else {
+
+                                            htm.Node.classList.remove(classname);
+                                        }
+                                    }
+
+                                    
+                                };
+
+                                // console.log(subject, signal);
+
+                                watcher.subscribe(subject, signal);
+
+                                signal.Functor.call(observer, htm, field, classname, data);
+
+                                break
+                           
+                            case "#hide":
+
+                                htm.Node.style.display = "none";
+
+                                Attribute.Remove(htm.Node, "#hide");
+
+                                hetui[attribute.value] = function (boolean) {
+
+                                    if (boolean) {
+
+                                        htm.Node.style.display = "none";
+
+                                    } else {
+
+                                        htm.Node.style.display = "initial";
+                                    }
+                                };
+
+                                signal[attribute.name] = {
+                                    Name: attribute.value,
+                                    Param : Class.Functor.Param(hetui[attribute.value]),
+                                    Functor : hetui[attribute.value],
+                                };
+
+                                signal[attribute.name].Param = new Tuple(signal[attribute.name].Param);
+
+                                hetui[attribute.value]["#hide"] = true;
+
+                                break;
+                           
                             case ":style|width":
 
                                 var field = attribute.value.split(":");
