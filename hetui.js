@@ -864,13 +864,13 @@ Observer.Define = function (value) {
 
         var objkey = field [field.length - 1];
 
-        // console.log(field);
+        // console.log("定义存取器：", objkey, value);
 
         Object.defineProperty(this, objkey, {
 
             get : function () {
 
-                // console.log("获取值");
+                // console.log("获取值", value, objkey);
 
                 return value;
             },
@@ -879,9 +879,23 @@ Observer.Define = function (value) {
 
                 var subject = field;
 
+                console.log("原始值", value, Object.getOwnPropertyDescriptors(value));
+
+                if (value && typeof value === "object" && newvalue && typeof newvalue === "object") {
+                    // 拷贝旧对象的访问器到新对象
+                    let oldDescriptors = Object.getOwnPropertyDescriptors(value);
+                    for (let key of Object.keys(oldDescriptors)) {
+                        let desc = oldDescriptors[key];
+                        if (desc.get || desc.set) {
+                            // 是访问器属性
+                            Object.defineProperty(newvalue, key, desc);
+                        }
+                    }
+                }
+
                 value = newvalue;
 
-                // console.log("修改值", newvalue);
+                console.log("修改值", newvalue);
                 //
                 // console.log(subject, object);
 
@@ -893,6 +907,21 @@ Observer.Define = function (value) {
     };
 
     observe["@Hetui::observer"] = "存取器";
+
+    if (typeof value == "object" && value) {
+
+        Object.keys(value).forEach(key => {
+            // console.log(key, value[key] , typeof value[key]);
+            // observe.call(this, value, [objkey, key], this);
+            if (typeof value[key] == "function" && value[key]["@Hetui::observer"]) {
+
+                // console.log("函数观察者：", key, value);
+
+                observe[key] = value[key];
+
+            }
+        });
+    }
 
     return observe
 };
@@ -1251,6 +1280,8 @@ Hetui.Observe = function (object) {
 
         for (var objkey in context) {
 
+            // console.log(objkey, "看我", context, field);
+
             if (Object.prototype.hasOwnProperty.call(context, objkey)) {
 
                 // console.log(objkey, context[objkey]);
@@ -1261,11 +1292,43 @@ Hetui.Observe = function (object) {
 
                 if (typeof observe == "function" && observe["@Hetui::observer"]) {
 
+                    // console.log("function", observe);
+                    // console.log("this", context);
+                    // console.log("object", object);
+                    // console.log("field", field);
+                    // console.log("observer", observer);
+
                     observe.call(context, object, field, observer);
 
-                    field = field.slice(0, -1);
+                    Object.keys(observe).forEach(key => {
+                        // console.log(key, observe[key]);
+                        // observe.call(this, value, [objkey, key], this);
+                        if (key != "@Hetui::observer") {
+
+                            // console.log(field, context);
+
+                            // console.log("函数观察者：", key, observe[key], field, context);
+
+                            var value = field[field.length -1];
+
+                            // console.log("watcher", value, context[value]);
+                           
+                            watcher(context[value], field);
+                           
+                            console.log("field", field);
+                        }
+                    });
+
+
+                    // console.log("field", field);
+
+                    field.pop();
+
+                    // console.log("field", field);
 
                 } else if (typeof observe == "object") {
+
+                    // console.log("我要关注你", observe, field);
 
                     watcher(observe, field);
 
